@@ -1,2 +1,4 @@
-/.venv
-/__pycache__
+/ppt-maker/.venv
+/ppt-maker/__pycache__
+/test.py
+/swarm/.env

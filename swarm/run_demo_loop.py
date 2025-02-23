@@ -2,6 +2,7 @@ from swarm import Swarm
 from openai import OpenAI
 import json
 from colorama import init, Fore, Style
+import os
 
 # Initialize colorama for colored console output
 init(autoreset=True)
@@ -69,11 +70,12 @@ def run_demo_loop(
     """
     Runs an interactive demo loop with color-coded output for the CLI.
     """
-    ollama_client = OpenAI(
-        base_url="http://localhost:11434/v1",        
-        api_key="ollama"            
+    chatgpt_client = OpenAI(      
+        api_key=os.getenv("OPENAI_API_KEY"),        
+        base_url="https://api.openai.com/v1"       
     )
-    client = Swarm(client=ollama_client)
+    
+    client = Swarm(client=chatgpt_client)
     print(f"{Fore.GREEN}Starting Ollama Swarm CLI:")
 
     messages = []

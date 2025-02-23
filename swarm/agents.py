@@ -1,36 +1,14 @@
-from pptx import Presentation
-import pptx
 from swarm import Swarm, Agent
 from openai import OpenAI
 from run_demo_loop import run_demo_loop
 import json
-
-prs = Presentation()
-
-def _new_slide(title: str, description: str):
-    """
-    Step 1: Create a new slide in the PowerPoint presentation.
-    Step 2: Add a title to the slide.
-    Step 3: Add a description to the slide.
-    Step 4: Save the presentation file.
-    
-    Parameters:
-    title (str): The main heading of the slide.
-    description (str): The detailed content explaining the title.
-    """
-    slide = prs.slides.add_slide(prs.slide_layouts[1])
-    shapes = slide.shapes
-    shapes.title.text = title
-    shapes[1].text = description
-    prs.save("./pptx-presentations/new.pptx")
-
-
+import requests
+import os
 
 # Modify the prs object to prevent overwriting the file every time.
-
 router_agent = Agent(
     name="Router", 
-    model="mistral-small:24b", 
+    model="gpt-4o-mini", 
     instructions="""
 
     Don't tell the user the steps just you follow them.
@@ -47,8 +25,7 @@ router_agent = Agent(
 
 summarizer = Agent(
     name="Summarizer",
-    model="mistral-small:24b",
-    options={"temperature": 0},
+    model="gpt-4o-mini",
     instructions="""
     
     Don't tell the user the steps just you follow them.
@@ -63,7 +40,7 @@ summarizer = Agent(
         - Titles: Generate key ideas separated by '^'.
         - Descriptions: Generate corresponding explanations separated by '^'.
         - Don't forgot to use "^" as a separator.
-        - for a new line just a /n
+        - for a new line just a "/n"
     Step 8: Ask the user for final confirmation before calling make_presentation function.
     Step 9: If the user confirms, call make_presentation with the formatted titles and descriptions.
     Step 10: Inform the user once the presentation is successfully created.
@@ -86,7 +63,7 @@ def transfer_to_router():
     """
     return router_agent
 
-def make_presentation(titles, descriptions):
+def make_presentation(titles: str, descriptions: str):
     """
     Step 1: Receive formatted titles and descriptions from the Summarizer agent.
     Step 2: Split the provided strings using the '^' separator.
@@ -103,18 +80,16 @@ def make_presentation(titles, descriptions):
     titles = "Introduction^Main Idea^Conclusion"
     descriptions = "Brief overview^Detailed discussion^Final thoughts"
     """
-    print("Making presentation...")
-
-    titles = titles.split("^")
-    descriptions = descriptions.split("^")
-    presentation_values = dict(zip(titles, descriptions))
-    for title, description in presentation_values.items():
-        title = title.replace("#", "").replace("\n", "").replace("/", "")
-        description = description.replace("#", "").replace("\n", "").replace("/", "")
-        print("Creating slides...")
-        print("Title:", title)
-        print("Description:", description)
-        _new_slide(title, description)
+    response = requests.post(
+        url="http://127.0.0.1:5001/create_ppt",
+        json={
+            "title": titles,
+            "description": descriptions
+        }
+    )
+    if response.status_code != 200:
+        print(response.status_code)
+        raise Exception("Failed to create the presentation.")
     return "SUCCESS!"
 
 router_agent.functions.append(transfer_to_summarizer)

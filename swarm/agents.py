@@ -11,7 +11,7 @@ router_agent = Agent(
     model="gpt-4o-mini", 
     instructions="""
 
-    Don't tell the user the steps just you follow them.
+    Don't tell the user the steps just you follow them. If you get nothing as input just ignore it.
 
 
     Step 1: Receive the user's input.
@@ -28,7 +28,7 @@ summarizer = Agent(
     model="gpt-4o-mini",
     instructions="""
     
-    Don't tell the user the steps just you follow them.
+    Don't tell the user the steps just you follow them. If you get nothing as input just ignore it.
 
     Step 1: Greet the user and ask for the name of the book they want summarized.
     Step 2: Ask how many key points they want in the summary (default: 4).
@@ -98,11 +98,15 @@ summarizer.functions = [transfer_to_router, make_presentation]
 def _run_demo_loop(messages_starting, last_agent):
     if last_agent is None: 
         last_agent = router_agent
-    ollama_client = OpenAI(
-        base_url="http://localhost:11434/v1",        
-        api_key="ollama"            
+    chatgpt_client = OpenAI(
+        base_url="https://api.openai.com/v1",        
+        api_key=os.getenv("OPENAI_API_KEY")          
     )
-    client = Swarm(client=ollama_client)
+    # ollama_client = OpenAI(
+    #     base_url="http://localhost:11434/v1/",
+    #     api_key="ollama"
+    # )
+    client = Swarm(client=chatgpt_client)
 
     messages = client.run(
         agent=last_agent,
@@ -131,5 +135,3 @@ def _run_demo_loop(messages_starting, last_agent):
     last_agent = messages.agent
     role =  message["role"]
     return content, role, last_agent
-
-run_demo_loop(router_agent)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, TextField, IconButton, Typography, Paper } from "@mui/material";
+import { Box, TextField, IconButton, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import { MuiMarkdown, getOverrides } from "mui-markdown";

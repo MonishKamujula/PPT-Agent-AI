@@ -10,9 +10,10 @@ last_agent = None
 def _add_messages(message, last_agent):
     messages.append({"role": "user", "content": message})
     last_agent = last_agent
-@app.route('/')
+@app.route('/new_chat', methods=['GET'])
 def home():
-    return "Hello, World!"
+    messages.clear()
+    return jsonify({'message': 'Working!'})
 
 @app.route('/check', methods=['GET'])
 def check():
@@ -22,8 +23,9 @@ def check():
 def main():
     # first get the input from the user
 
-    message_content = request.args.get('text')
-
+    message_content = request.args.get('text').replace("%", " ")
+    connection = request.args.get('connection')
+    
     _add_messages(message_content, last_agent)
     content, role ,new_agent = _run_demo_loop(messages, last_agent)
     print("Printing content:", content)

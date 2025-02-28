@@ -1,34 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, IconButton, Typography, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import "axios";
 import axios from "axios";
+import { MuiMarkdown, getOverrides } from "mui-markdown";
 
 const ChatUI = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  
-  const [currentMessage, setcurrentMessage] = useState("");
+  const [currentMessage, setCurrentMessage] = useState("");
+
   const handleSend = () => {
     if (input.trim()) {
-      console.log("Send button clicked...");
       setMessages([...messages, { content: input, role: "user" }]);
-      setcurrentMessage(input);
-      console.log("Current message:", currentMessage);
+      setCurrentMessage(input);
       setInput("");
     }
   };
 
   useEffect(() => {
-    if (!currentMessage) return; // Prevent API call if input is empty
+    if (!currentMessage) return;
 
     const fetchResponse = async () => {
       try {
-        console.log("Calling API ...");
-        const response = await axios.get(`http://127.0.0.1:5000/predict?text=${currentMessage}`);
+        const response = await axios.get(
+          `http://127.0.0.1:5000/predict?text=${currentMessage}`
+        );
         setMessages((prevMessages) => [
           ...prevMessages,
-          { content: response.data.content, role: "assistant" }
+          { content: response.data.content, role: "assistant" },
         ]);
       } catch (error) {
         console.error("Error fetching response:", error);
@@ -42,13 +41,15 @@ const ChatUI = () => {
     <Box
       sx={{
         width: "40%",
-        height: "100vh",
+        height: "80vh",
         display: "flex",
         flexDirection: "column",
-        borderRadius: 2,
-        boxShadow: 3,
+        borderRadius: 3,
+        boxShadow: 5,
         p: 2,
-        bgcolor: "#f5f5f5",
+        bgcolor: "rgba(255, 255, 255, 0.15)", // Semi-transparent white
+        backdropFilter: "blur(15px)", // Frosted glass effect
+        border: "1px solid rgba(255, 255, 255, 0.2)",
       }}
     >
       {/* Messages Container */}
@@ -63,22 +64,36 @@ const ChatUI = () => {
         }}
       >
         {messages.map((msg, index) => (
-  <Paper
-    key={index}
-    sx={{
-      p: 1,
-      bgcolor: msg.role === "user" ? "#1976d2" : "#e0e0e0",
-      color: msg.role === "user" ? "#fff" : "#000",
-      alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-    }}
-  >
-    <Typography>{msg.content}</Typography>
-  </Paper>
-))}
+          <Paper
+            key={index}
+            sx={{
+              p: 1.5,
+              bgcolor: msg.role === "user" ? "#0066B2" : "#99E2F7",
+              color: "white",
+              alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+              borderRadius: "12px",
+              maxWidth: "75%",
+            }}
+          >
+            <MuiMarkdown
+              overrides={{
+                ...getOverrides({}), // This will keep the other default overrides.
+                h1: {
+                  component: "p",
+                  props: {
+                    style: { color: "red" },
+                  },
+                },
+              }}
+            >
+              {msg.content}
+            </MuiMarkdown>
+          </Paper>
+        ))}
       </Box>
 
       {/* Input Field & Send Button */}
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+      <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 1 }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -86,8 +101,24 @@ const ChatUI = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
+          sx={{
+            bgcolor: "rgba(255, 255, 255, 0.8)",
+            borderRadius: "8px",
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSend();
+            }
+          }}
         />
-        <IconButton color="primary" onClick={handleSend}>
+        <IconButton
+          sx={{
+            bgcolor: "#0099CC",
+            color: "#fff",
+            "&:hover": { bgcolor: "#0066B2" },
+          }}
+          onClick={handleSend}
+        >
           <SendIcon />
         </IconButton>
       </Box>

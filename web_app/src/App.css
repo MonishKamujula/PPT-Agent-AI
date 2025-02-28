@@ -4,4 +4,11 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
+  background: url('https://www.transparenttextures.com/patterns/cubes.png'), #001f3f;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+

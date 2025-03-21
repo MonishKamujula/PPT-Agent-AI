@@ -2,3 +2,6 @@
 /ppt-maker/__pycache__
 /test.py
 /swarm/.env
+.venv
+python
+python.zip

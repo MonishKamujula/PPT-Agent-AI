@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from agents import _run_demo_loop
 import json
+import awsgi
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for API requests
@@ -24,12 +25,14 @@ def main():
     # first get the input from the user
 
     message_content = request.args.get('text').replace("%", " ")
-    connection = request.args.get('connection')
     
     _add_messages(message_content, last_agent)
     content, role ,new_agent = _run_demo_loop(messages, last_agent)
     print("Printing content:", content)
     return jsonify({'content': content, 'messages': messages})
 
+# def lambda_handler(event, context):
+#     return awsgi.response(app, event, context)
+
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

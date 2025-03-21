@@ -70,7 +70,7 @@ def make_presentation(titles: str, descriptions: str):
     """
     print("Makeing presentation...")
     response = requests.post(
-        url="http://127.0.0.1:5001/create_ppt",
+        url="https://qazkkbbo24ucfozrietxbmum7q0raunf.lambda-url.us-east-1.on.aws/",
         json={
             "title": titles,
             "description": descriptions

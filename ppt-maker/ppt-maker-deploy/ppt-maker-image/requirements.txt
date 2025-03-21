@@ -1,0 +1,6 @@
+six
+python-pptx==0.6.10
+boto3
+flask
+aws-wsgi
+flask-cors

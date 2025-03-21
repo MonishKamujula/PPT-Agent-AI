@@ -23,7 +23,7 @@ const ChatUI = () => {
     const fetchResponse = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:5000/predict?text=${currentMessage}`
+          `https://i89he20uc0.execute-api.us-east-1.amazonaws.com/ModelCallingStage/predict?text=${currentMessage}`
         );
         setMessages((prevMessages) => [
           ...prevMessages,

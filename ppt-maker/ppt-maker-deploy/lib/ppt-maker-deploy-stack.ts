@@ -15,6 +15,7 @@ export class PptMakerDeployStack extends cdk.Stack {
         code: lambda.DockerImageCode.fromImageAsset("./ppt-maker-image"),
         memorySize: 1024,
         timeout: cdk.Duration.seconds(10),
+        description: "PPT maker function",
       }
     );
 
@@ -29,6 +30,30 @@ export class PptMakerDeployStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, "FunctionUrlValue", {
       value: functionUrl.url,
+    });
+
+    const SwarmAgentFunction = new lambda.DockerImageFunction(
+      this,
+      "SwarmAgentFunction",
+      {
+        code: lambda.DockerImageCode.fromImageAsset("./swarm_agent_image"),
+        memorySize: 1024,
+        timeout: cdk.Duration.seconds(10),
+        description: "Swarm agent function",
+      }
+    );
+
+    const functionUrl2 = SwarmAgentFunction.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedMethods: [lambda.HttpMethod.ALL],
+        allowedHeaders: ["*"],
+        allowedOrigins: ["*"],
+      },
+    });
+
+    new cdk.CfnOutput(this, "FunctionUrlValue2", {
+      value: functionUrl2.url,
     });
     // example resource
     // const queue = new sqs.Queue(this, 'PptMakerDeployQueue', {

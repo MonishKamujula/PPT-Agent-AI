@@ -1,0 +1,4 @@
+boto3
+openai-swarm
+requests
+dotenv
